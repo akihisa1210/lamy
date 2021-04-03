@@ -17,7 +17,8 @@ func main() {
 	}
 
 	if len(os.Args) != 2 {
-		return
+		fmt.Printf("Usage: %s [target]", os.Args[0])
+		os.Exit(1)
 	}
 
 	target := os.Args[1]
