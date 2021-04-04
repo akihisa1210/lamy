@@ -8,17 +8,17 @@ import (
 )
 
 type Prompt struct {
-	Name  string
-	Label string
+	Label    string
+	Question string
 }
 
 func generateQuestions(prompts []Prompt, target string) []*survey.Question {
 	qs := []*survey.Question{}
 	for _, p := range prompts {
-		generatedLabel := fmt.Sprintf(p.Label, target)
+		formattedQuestion := fmt.Sprintf(p.Question, target)
 		qs = append(qs, &survey.Question{
-			Name:   p.Name,
-			Prompt: &survey.Input{Message: generatedLabel},
+			Name:   p.Label,
+			Prompt: &survey.Input{Message: formattedQuestion},
 		})
 	}
 	return qs
