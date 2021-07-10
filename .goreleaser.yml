@@ -10,22 +10,36 @@ builds:
       - darwin
     goarch:
       - amd64
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.revision={{.ShortCommit}}
 archives:
   - format: zip
     replacements:
       amd64: x86_64
       darwin: macOS
+    files:
+      - LICENSE
+      - CREDITS
+      - README.md
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 snapshot:
   name_template: "{{ .Tag }}-next"
 changelog:
   sort: asc
   filters:
     exclude:
-      - '^docs:'
-      - '^test:'
-      - '^refactor:'
-      - '^chore:'
-      - '^ci:'
+      - "^docs:"
+      - "^test:"
+      - "^refactor:"
+      - "^chore:"
+      - "^ci:"
       - Merge pull request
+brew:
+  - tap:
+      owner: akihisa1210
+      name: homebrew-lamy
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    homepage: "https://github.com/akihisa1210/lamy"
+    description: "A CLI tool that asks a series of questions to clarify what you want to know."
+    license: "Apache-2.0"
