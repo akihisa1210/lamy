@@ -15,17 +15,21 @@ archives:
     replacements:
       amd64: x86_64
       darwin: macOS
+    files:
+      - LICENSE
+      - CREDITS
+      - README.md
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 snapshot:
   name_template: "{{ .Tag }}-next"
 changelog:
   sort: asc
   filters:
     exclude:
-      - '^docs:'
-      - '^test:'
-      - '^refactor:'
-      - '^chore:'
-      - '^ci:'
+      - "^docs:"
+      - "^test:"
+      - "^refactor:"
+      - "^chore:"
+      - "^ci:"
       - Merge pull request
