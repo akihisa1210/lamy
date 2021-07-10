@@ -35,7 +35,7 @@ changelog:
       - "^chore:"
       - "^ci:"
       - Merge pull request
-brew:
+brews:
   - tap:
       owner: akihisa1210
       name: homebrew-lamy
@@ -43,3 +43,4 @@ brew:
     homepage: "https://github.com/akihisa1210/lamy"
     description: "A CLI tool that asks a series of questions to clarify what you want to know."
     license: "Apache-2.0"
+    install: 'bin.install "lamy"'
