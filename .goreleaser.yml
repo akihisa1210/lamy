@@ -33,3 +33,11 @@ changelog:
       - "^chore:"
       - "^ci:"
       - Merge pull request
+brew:
+  - tap:
+      owner: akihisa1210
+      name: homebrew-lamy
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    homepage: "https://github.com/akihisa1210/lamy"
+    description: "A CLI tool that asks a series of questions to clarify what you want to know."
+    license: "Apache-2.0"
