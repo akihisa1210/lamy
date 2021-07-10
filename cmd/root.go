@@ -32,7 +32,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().BoolVarP(&isList, "list", "l", false, "List questions")
+	rootCmd.Flags().BoolVarP(&isList, "list", "l", false, "list questions")
 }
 
 type Prompt struct {
