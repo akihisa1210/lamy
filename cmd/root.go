@@ -9,16 +9,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var rootCmd = &cobra.Command{
-	Use:   "lamy",
-	Short: "A CLI tool that asks a series of questions to clarify what you want to know.",
-	Long: `A CLI tool that asks a series of questions to clarify what you want to know.
+var (
+	rootCmd = &cobra.Command{
+		Use:   "lamy",
+		Short: "A CLI tool that asks a series of questions to clarify what you want to know.",
+		Long: `A CLI tool that asks a series of questions to clarify what you want to know.
 It contains questions about genre, difference, part, definition, etymology, opposite, cause, and effect.`,
-	Args: cobra.ExactArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		lamyRun(args[0])
-	},
-}
+		Args: cobra.ExactArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			lamyRun(args[0])
+		},
+	}
+	isList = false
+)
 
 // Execute executes the lamy command.
 func Execute() {
@@ -28,15 +31,23 @@ func Execute() {
 	}
 }
 
+func init() {
+	rootCmd.Flags().BoolVarP(&isList, "list", "l", false, "List questions")
+}
+
 type Prompt struct {
 	Label    string
 	Question string
 }
 
+func formatQuestion(prompt Prompt, target string) string {
+	return fmt.Sprintf(prompt.Question, target)
+}
+
 func generateQuestions(prompts []Prompt, target string) []*survey.Question {
 	qs := []*survey.Question{}
 	for _, p := range prompts {
-		formattedQuestion := fmt.Sprintf(p.Question, target)
+		formattedQuestion := formatQuestion(p, target)
 		qs = append(qs, &survey.Question{
 			Name:   p.Label,
 			Prompt: &survey.Input{Message: formattedQuestion},
@@ -79,6 +90,13 @@ func lamyRun(target string) {
 			"Effect",
 			"[結果・派生] %s から生じる（た）ものは？\n",
 		},
+	}
+
+	if isList {
+		for _, p := range prompts {
+			fmt.Println(formatQuestion(p, target))
+		}
+		return
 	}
 
 	qs := generateQuestions(prompts, target)
