@@ -21,7 +21,50 @@ It contains questions about genre, difference, part, definition, etymology, oppo
 		},
 	}
 	isList = false
+	isTech = false
 )
+
+var defaultPrompts = []Prompt{
+	{
+		"Genre",
+		"[類] %s は何の一種か？\n",
+	},
+	{
+		"Difference",
+		"[種差] %s は、同じグループの中で他と何が違うのか？\n",
+	},
+	{
+		"Part",
+		"[部分] %s を構成する部分を列挙すると？\n",
+	},
+	{
+		"Definition",
+		"[定義] %s とは何か？\n",
+	},
+	{
+		"Etymology",
+		"[語源] %s の語源は？\n",
+	},
+	{
+		"Opposite",
+		"[相反] %s の反対は？\n",
+	},
+	{
+		"Cause",
+		"[原因・由来] %s を生じさせる（た）ものは？\n",
+	},
+	{
+		"Effect",
+		"[結果・派生] %s から生じる（た）ものは？\n",
+	},
+}
+
+var technicalPrompts = []Prompt{
+	{
+		"Example",
+		"Example prompt about %s\n",
+	},
+}
 
 // Execute executes the lamy command.
 func Execute() {
@@ -33,6 +76,7 @@ func Execute() {
 
 func init() {
 	rootCmd.Flags().BoolVarP(&isList, "list", "l", false, "list questions")
+	rootCmd.Flags().BoolVarP(&isTech, "tech", "t", false, "use questions for technical topic")
 }
 
 type Prompt struct {
@@ -57,39 +101,14 @@ func generateQuestions(prompts []Prompt, target string) []*survey.Question {
 }
 
 func lamyRun(target string) {
-	prompts := []Prompt{
-		{
-			"Genre",
-			"[類] %s は何の一種か？\n",
-		},
-		{
-			"Difference",
-			"[種差] %s は、同じグループの中で他と何が違うのか？\n",
-		},
-		{
-			"Part",
-			"[部分] %s を構成する部分を列挙すると？\n",
-		},
-		{
-			"Definition",
-			"[定義] %s とは何か？\n",
-		},
-		{
-			"Etymology",
-			"[語源] %s の語源は？\n",
-		},
-		{
-			"Opposite",
-			"[相反] %s の反対は？\n",
-		},
-		{
-			"Cause",
-			"[原因・由来] %s を生じさせる（た）ものは？\n",
-		},
-		{
-			"Effect",
-			"[結果・派生] %s から生じる（た）ものは？\n",
-		},
+	var (
+		prompts []Prompt
+	)
+
+	if isTech {
+		prompts = technicalPrompts
+	} else {
+		prompts = defaultPrompts
 	}
 
 	if isList {
@@ -110,6 +129,7 @@ func lamyRun(target string) {
 		Opposite   string
 		Cause      string
 		Effect     string
+		EXample    string
 	}{}
 
 	err := survey.Ask(qs, &answers)
