@@ -61,8 +61,36 @@ var defaultPrompts = []Prompt{
 
 var technicalPrompts = []Prompt{
 	{
-		"Example",
-		"Example prompt about %s\n",
+		"Genre",
+		"(類) %s は何の一種か？\n",
+	},
+	{
+		"Difference",
+		"(種差) %s は、同じグループの中で他と何が違うのか？\n",
+	},
+	{
+		"Part",
+		"(部分) %s を構成する部分を列挙すると？\n",
+	},
+	{
+		"Cooperation",
+		"(連携) %s と連携するものは？\n",
+	},
+	{
+		"Definition",
+		"(定義) %s とは何か？\n",
+	},
+	{
+		"UseCase",
+		"(ユースケース) %s の具体的なユースケースは？\n",
+	},
+	{
+		"Pros",
+		"(利点) %s を使うと何が嬉しいのか？\n",
+	},
+	{
+		"Cons",
+		"(欠点) %s の欠点は？\n",
 	},
 }
 
@@ -121,15 +149,19 @@ func lamyRun(target string) {
 	qs := generateQuestions(prompts, target)
 
 	answers := struct {
-		Genre      string
-		Difference string
-		Part       string
-		Definition string
-		Etymology  string
-		Opposite   string
-		Cause      string
-		Effect     string
-		EXample    string
+		Genre       string
+		Difference  string
+		Part        string
+		Definition  string
+		Etymology   string
+		Opposite    string
+		Cause       string
+		Effect      string
+		EXample     string
+		Cooperation string
+		UseCase     string
+		Pros        string
+		Cons        string
 	}{}
 
 	err := survey.Ask(qs, &answers)
