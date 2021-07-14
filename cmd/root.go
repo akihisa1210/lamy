@@ -14,7 +14,7 @@ var (
 		Use:   "lamy",
 		Short: "A CLI tool that asks a series of questions to clarify what you want to know.",
 		Long: `A CLI tool that asks a series of questions to clarify what you want to know.
-		By default, the CLI asks you questions about genre, difference, part, definition, etymology, opposite, cause, and effect.`,
+By default, the CLI asks you questions about genre, difference, part, definition, etymology, opposite, cause, and effect.`,
 		Args: cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			lamyRun(args[0])
