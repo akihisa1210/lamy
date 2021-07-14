@@ -14,7 +14,7 @@ var (
 		Use:   "lamy",
 		Short: "A CLI tool that asks a series of questions to clarify what you want to know.",
 		Long: `A CLI tool that asks a series of questions to clarify what you want to know.
-It contains questions about genre, difference, part, definition, etymology, opposite, cause, and effect.`,
+		By default, the CLI asks you questions about genre, difference, part, definition, etymology, opposite, cause, and effect.`,
 		Args: cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			lamyRun(args[0])
@@ -27,35 +27,35 @@ It contains questions about genre, difference, part, definition, etymology, oppo
 var defaultPrompts = []Prompt{
 	{
 		"Genre",
-		"[類] %s は何の一種か？\n",
+		"(類) %s は何の一種か？\n",
 	},
 	{
 		"Difference",
-		"[種差] %s は、同じグループの中で他と何が違うのか？\n",
+		"(種差) %s は、同じグループの中で他と何が違うのか？\n",
 	},
 	{
 		"Part",
-		"[部分] %s を構成する部分を列挙すると？\n",
+		"(部分) %s を構成する部分を列挙すると？\n",
 	},
 	{
 		"Definition",
-		"[定義] %s とは何か？\n",
+		"(定義) %s とは何か？\n",
 	},
 	{
 		"Etymology",
-		"[語源] %s の語源は？\n",
+		"(語源) %s の語源は？\n",
 	},
 	{
 		"Opposite",
-		"[相反] %s の反対は？\n",
+		"(相反) %s の反対は？\n",
 	},
 	{
 		"Cause",
-		"[原因・由来] %s を生じさせる（た）ものは？\n",
+		"(原因・由来) %s を生じさせる（た）ものは？\n",
 	},
 	{
 		"Effect",
-		"[結果・派生] %s から生じる（た）ものは？\n",
+		"(結果・派生) %s から生じる（た）ものは？\n",
 	},
 }
 
