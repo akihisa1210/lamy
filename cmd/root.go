@@ -14,14 +14,85 @@ var (
 		Use:   "lamy",
 		Short: "A CLI tool that asks a series of questions to clarify what you want to know.",
 		Long: `A CLI tool that asks a series of questions to clarify what you want to know.
-It contains questions about genre, difference, part, definition, etymology, opposite, cause, and effect.`,
+By default, the CLI asks you questions about genre, difference, part, definition, etymology, opposite, cause, and effect.`,
 		Args: cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			lamyRun(args[0])
 		},
 	}
 	isList = false
+	isTech = false
 )
+
+var defaultPrompts = []Prompt{
+	{
+		"Genre",
+		"(類) %s は何の一種か？\n",
+	},
+	{
+		"Difference",
+		"(種差) %s は、同じグループの中で他と何が違うのか？\n",
+	},
+	{
+		"Part",
+		"(部分) %s を構成する部分を列挙すると？\n",
+	},
+	{
+		"Definition",
+		"(定義) %s とは何か？\n",
+	},
+	{
+		"Etymology",
+		"(語源) %s の語源は？\n",
+	},
+	{
+		"Opposite",
+		"(相反) %s の反対は？\n",
+	},
+	{
+		"Cause",
+		"(原因・由来) %s を生じさせる（た）ものは？\n",
+	},
+	{
+		"Effect",
+		"(結果・派生) %s から生じる（た）ものは？\n",
+	},
+}
+
+var technicalPrompts = []Prompt{
+	{
+		"Genre",
+		"(類) %s は何の一種か？\n",
+	},
+	{
+		"Difference",
+		"(種差) %s は、同じグループの中で他と何が違うのか？\n",
+	},
+	{
+		"Part",
+		"(部分) %s を構成する部分を列挙すると？\n",
+	},
+	{
+		"Cooperation",
+		"(連携) %s と連携するものは？\n",
+	},
+	{
+		"Definition",
+		"(定義) %s とは何か？\n",
+	},
+	{
+		"UseCase",
+		"(ユースケース) %s の具体的なユースケースは？\n",
+	},
+	{
+		"Pros",
+		"(利点) %s を使うと何が嬉しいのか？\n",
+	},
+	{
+		"Cons",
+		"(欠点) %s の欠点は？\n",
+	},
+}
 
 // Execute executes the lamy command.
 func Execute() {
@@ -33,6 +104,7 @@ func Execute() {
 
 func init() {
 	rootCmd.Flags().BoolVarP(&isList, "list", "l", false, "list questions")
+	rootCmd.Flags().BoolVarP(&isTech, "tech", "t", false, "use questions for technical topic")
 }
 
 type Prompt struct {
@@ -57,39 +129,14 @@ func generateQuestions(prompts []Prompt, target string) []*survey.Question {
 }
 
 func lamyRun(target string) {
-	prompts := []Prompt{
-		{
-			"Genre",
-			"[類] %s は何の一種か？\n",
-		},
-		{
-			"Difference",
-			"[種差] %s は、同じグループの中で他と何が違うのか？\n",
-		},
-		{
-			"Part",
-			"[部分] %s を構成する部分を列挙すると？\n",
-		},
-		{
-			"Definition",
-			"[定義] %s とは何か？\n",
-		},
-		{
-			"Etymology",
-			"[語源] %s の語源は？\n",
-		},
-		{
-			"Opposite",
-			"[相反] %s の反対は？\n",
-		},
-		{
-			"Cause",
-			"[原因・由来] %s を生じさせる（た）ものは？\n",
-		},
-		{
-			"Effect",
-			"[結果・派生] %s から生じる（た）ものは？\n",
-		},
+	var (
+		prompts []Prompt
+	)
+
+	if isTech {
+		prompts = technicalPrompts
+	} else {
+		prompts = defaultPrompts
 	}
 
 	if isList {
@@ -102,14 +149,19 @@ func lamyRun(target string) {
 	qs := generateQuestions(prompts, target)
 
 	answers := struct {
-		Genre      string
-		Difference string
-		Part       string
-		Definition string
-		Etymology  string
-		Opposite   string
-		Cause      string
-		Effect     string
+		Genre       string
+		Difference  string
+		Part        string
+		Definition  string
+		Etymology   string
+		Opposite    string
+		Cause       string
+		Effect      string
+		EXample     string
+		Cooperation string
+		UseCase     string
+		Pros        string
+		Cons        string
 	}{}
 
 	err := survey.Ask(qs, &answers)
