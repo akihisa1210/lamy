@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/akihisa1210/lamy/question"
 	"github.com/spf13/cobra"
 )
 
@@ -16,83 +17,17 @@ var (
 		Long: `A CLI tool that asks a series of questions to clarify what you want to know.
 By default, the CLI asks you questions about genre, difference, part, definition, etymology, opposite, cause, and effect.`,
 		Args: cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
-			lamyRun(args[0])
+		RunE: func(cmd *cobra.Command, args []string) error {
+			err := lamyRun(args[0])
+			if err != nil {
+				return err
+			}
+			return nil
 		},
 	}
 	isList = false
 	isTech = false
 )
-
-var defaultPrompts = []Prompt{
-	{
-		"Genre",
-		"(類) %s は何の一種か？\n",
-	},
-	{
-		"Difference",
-		"(種差) %s は、同じグループの中で他と何が違うのか？\n",
-	},
-	{
-		"Part",
-		"(部分) %s を構成する部分を列挙すると？\n",
-	},
-	{
-		"Definition",
-		"(定義) %s とは何か？\n",
-	},
-	{
-		"Etymology",
-		"(語源) %s の語源は？\n",
-	},
-	{
-		"Opposite",
-		"(相反) %s の反対は？\n",
-	},
-	{
-		"Cause",
-		"(原因・由来) %s を生じさせる（た）ものは？\n",
-	},
-	{
-		"Effect",
-		"(結果・派生) %s から生じる（た）ものは？\n",
-	},
-}
-
-var technicalPrompts = []Prompt{
-	{
-		"Genre",
-		"(類) %s は何の一種か？\n",
-	},
-	{
-		"Difference",
-		"(種差) %s は、同じグループの中で他と何が違うのか？\n",
-	},
-	{
-		"Part",
-		"(部分) %s を構成する部分を列挙すると？\n",
-	},
-	{
-		"Cooperation",
-		"(連携) %s と連携するものは？\n",
-	},
-	{
-		"Definition",
-		"(定義) %s とは何か？\n",
-	},
-	{
-		"UseCase",
-		"(ユースケース) %s の具体的なユースケースは？\n",
-	},
-	{
-		"Pros",
-		"(利点) %s を使うと何が嬉しいのか？\n",
-	},
-	{
-		"Cons",
-		"(欠点) %s の欠点は？\n",
-	},
-}
 
 // Execute executes the lamy command.
 func Execute() {
@@ -107,66 +42,66 @@ func init() {
 	rootCmd.Flags().BoolVarP(&isTech, "tech", "t", false, "use questions for technical topic")
 }
 
-type Prompt struct {
-	Label    string
-	Question string
-}
-
-func formatQuestion(prompt Prompt, target string) string {
-	return fmt.Sprintf(prompt.Question, target)
-}
-
-func generateQuestions(prompts []Prompt, target string) []*survey.Question {
-	qs := []*survey.Question{}
-	for _, p := range prompts {
-		formattedQuestion := formatQuestion(p, target)
-		qs = append(qs, &survey.Question{
-			Name:   p.Label,
-			Prompt: &survey.Input{Message: formattedQuestion},
+func generateSurveyQuestions(qs []question.Question, target string) []*survey.Question {
+	sqs := []*survey.Question{}
+	for _, q := range qs {
+		sqs = append(sqs, &survey.Question{
+			Name:   q.Name,
+			Prompt: &survey.Input{Message: q.Format(target) + "\n"},
 		})
 	}
-	return qs
+	return sqs
 }
 
-func lamyRun(target string) {
-	var (
-		prompts []Prompt
-	)
+func generateSurveyAnswer(qs []question.Question) map[string]interface{} {
+	sas := map[string]interface{}{}
+	for _, q := range qs {
+		sas[q.Name] = ""
+	}
+	return sas
+}
+
+type TerminalInteraction struct{}
+
+func (ti *TerminalInteraction) ask(target string, qs []question.Question) (question.Answers, error) {
+	surveyQuestions := generateSurveyQuestions(qs, target)
+	surveyAnswers := generateSurveyAnswer(qs)
+
+	err := survey.Ask(surveyQuestions, &surveyAnswers)
+	if err != nil {
+		return nil, err
+	}
+
+	ans := map[string]string{}
+	for key, surveyAnswer := range surveyAnswers {
+		ans[key] = surveyAnswer.(string)
+	}
+
+	return ans, nil
+}
+
+func lamyRun(target string) error {
+	var qt []question.Question
 
 	if isTech {
-		prompts = technicalPrompts
+		qt = question.TechnicalQuestions
 	} else {
-		prompts = defaultPrompts
+		qt = question.DefaultQuestions
 	}
 
 	if isList {
-		for _, p := range prompts {
-			fmt.Println(formatQuestion(p, target))
+		for _, q := range qt {
+			fmt.Println(q.Format(target) + "\n")
 		}
-		return
+		return nil
 	}
 
-	qs := generateQuestions(prompts, target)
+	var ti TerminalInteraction
 
-	answers := struct {
-		Genre       string
-		Difference  string
-		Part        string
-		Definition  string
-		Etymology   string
-		Opposite    string
-		Cause       string
-		Effect      string
-		EXample     string
-		Cooperation string
-		UseCase     string
-		Pros        string
-		Cons        string
-	}{}
-
-	err := survey.Ask(qs, &answers)
+	_, err := ti.ask(target, qt)
 	if err != nil {
-		fmt.Println(err.Error())
-		return
+		return err
 	}
+
+	return nil
 }

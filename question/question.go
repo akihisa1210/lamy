@@ -5,6 +5,7 @@ import (
 	"fmt"
 )
 
+// Question has question name and its template.
 type Question struct {
 	Name     string
 	Template string
@@ -86,3 +87,6 @@ var TechnicalQuestions = []Question{
 		"(欠点) %s の欠点は？",
 	},
 }
+
+// Answers have the answer for the corresponding question.
+type Answers = map[string]string
