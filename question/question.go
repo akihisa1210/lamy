@@ -1,19 +1,37 @@
 // Package question contains questions and related types.
 package question
 
-import (
-	"fmt"
-)
+import "fmt"
 
-// Question has question name and its template.
+// Question has its name and formatted content.
 type Question struct {
+	Name    string
+	Content string
+}
+
+// QuestionTemplate is the template of a question.
+type QuestionTemplate struct {
 	Name     string
 	Template string
 }
 
-// Format returns question from question template and given target.
-func (q Question) Format(target string) string {
-	return fmt.Sprintf(q.Template, target)
+func (qt QuestionTemplate) format(target string) string {
+	return fmt.Sprintf(qt.Template, target)
+}
+
+// NewQuestions construct questions from question templates and target string.
+func NewQuestions(qts []QuestionTemplate, target string) []Question {
+	qs := []Question{}
+	for _, qt := range qts {
+		q := Question{
+			qt.Name,
+			qt.format(target),
+		}
+
+		qs = append(qs, q)
+	}
+
+	return qs
 }
 
 // DefaultQuestions are the question templates used by default.
