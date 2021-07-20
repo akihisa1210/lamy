@@ -35,7 +35,7 @@ func NewQuestions(qts []QuestionTemplate, target string) []Question {
 }
 
 // DefaultQuestions are the question templates used by default.
-var DefaultQuestions = []Question{
+var DefaultQuestions = []QuestionTemplate{
 	{
 		"Genre",
 		"(類) %s は何の一種か？",
@@ -71,7 +71,7 @@ var DefaultQuestions = []Question{
 }
 
 // TechnicalQuestions are the question templates for a technical topic.
-var TechnicalQuestions = []Question{
+var TechnicalQuestions = []QuestionTemplate{
 	{
 		"Genre",
 		"(類) %s は何の一種か？",
