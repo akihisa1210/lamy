@@ -22,6 +22,20 @@ brew install akihisa1210/lamy/lamy
 
 ## 開発
 
+### Git Hook の設定
+
+`.githooks` ディレクトリ以下に本プロジェクト用の Git Hook が配置されているので設定する。
+
+```sh
+git config --local core.hooksPath .githooks
+```
+
+### 動作確認
+
+```sh
+go run ./main
+```
+
 ### ビルド（ローカル）
 
 ```sh
