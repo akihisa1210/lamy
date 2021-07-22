@@ -10,8 +10,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	rootCmd = &cobra.Command{
+// NewLamyCommand creates the lamy command.
+func NewLamyCommand() *cobra.Command {
+	cmd := &cobra.Command{
 		Use:   "lamy",
 		Short: "A CLI tool that asks a series of questions to clarify what you want to know.",
 		Long: `A CLI tool that asks a series of questions to clarify what you want to know.
@@ -25,21 +26,27 @@ By default, the CLI asks you questions about genre, difference, part, definition
 			return nil
 		},
 	}
+
+	cmd.Flags().BoolVarP(&isList, "list", "l", false, "list questions")
+	cmd.Flags().BoolVarP(&isTech, "tech", "t", false, "use questions for technical topic")
+
+	cmd.AddCommand(NewLamyVersionCommand())
+
+	return cmd
+}
+
+var (
 	isList = false
 	isTech = false
 )
 
 // Execute executes the lamy command.
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
+	cmd := NewLamyCommand()
+	if err := cmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-}
-
-func init() {
-	rootCmd.Flags().BoolVarP(&isList, "list", "l", false, "list questions")
-	rootCmd.Flags().BoolVarP(&isTech, "tech", "t", false, "use questions for technical topic")
 }
 
 func generateSurveyQuestions(qs []question.Question) []*survey.Question {
