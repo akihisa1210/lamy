@@ -15,7 +15,7 @@ func TestRootCommand(t *testing.T) {
 	}{
 		{
 			name:    "normal question",
-			command: "lamy -l test",
+			command: "lamy test",
 			want: `(類) test は何の一種か？
 
 (種差) test は、同じグループの中で他と何が違うのか？
@@ -36,7 +36,7 @@ func TestRootCommand(t *testing.T) {
 		},
 		{
 			name:    "technical question",
-			command: "lamy -l -t test",
+			command: "lamy -t test",
 			want: `(類) test は何の一種か？
 
 (種差) test は、同じグループの中で他と何が違うのか？

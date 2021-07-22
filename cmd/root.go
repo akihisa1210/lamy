@@ -26,7 +26,7 @@ By default, the CLI asks you questions about genre, difference, part, definition
 		},
 	}
 
-	cmd.Flags().BoolVarP(&isList, "list", "l", false, "list questions")
+	cmd.Flags().BoolVarP(&isInteractive, "interactive", "i", false, "ask questions interactively")
 	cmd.Flags().BoolVarP(&isTech, "tech", "t", false, "use questions for technical topic")
 
 	cmd.AddCommand(NewLamyVersionCommand())
@@ -35,8 +35,8 @@ By default, the CLI asks you questions about genre, difference, part, definition
 }
 
 var (
-	isList = false
-	isTech = false
+	isInteractive = false
+	isTech        = false
 )
 
 // Execute executes the lamy command.
@@ -97,18 +97,17 @@ func runLamy(cmd *cobra.Command, target string) error {
 
 	qs := question.NewQuestions(qt, target)
 
-	if isList {
-		for _, q := range qs {
-			cmd.Println(q.Content + "\n")
+	if isInteractive {
+		var ti TerminalInteraction
+		_, err := ti.ask(qs)
+		if err != nil {
+			return err
 		}
 		return nil
 	}
 
-	var ti TerminalInteraction
-	_, err := ti.ask(qs)
-	if err != nil {
-		return err
+	for _, q := range qs {
+		cmd.Println(q.Content + "\n")
 	}
-
 	return nil
 }
