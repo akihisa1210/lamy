@@ -2,7 +2,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/AlecAivazis/survey/v2"
@@ -10,36 +9,43 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	rootCmd = &cobra.Command{
+// NewLamyCommand creates the lamy command.
+func NewLamyCommand() *cobra.Command {
+	cmd := &cobra.Command{
 		Use:   "lamy",
 		Short: "A CLI tool that asks a series of questions to clarify what you want to know.",
 		Long: `A CLI tool that asks a series of questions to clarify what you want to know.
 By default, the CLI asks you questions about genre, difference, part, definition, etymology, opposite, cause, and effect.`,
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			err := lamyRun(args[0])
+			err := runLamy(cmd, args[0])
 			if err != nil {
 				return err
 			}
 			return nil
 		},
 	}
+
+	cmd.Flags().BoolVarP(&isList, "list", "l", false, "list questions")
+	cmd.Flags().BoolVarP(&isTech, "tech", "t", false, "use questions for technical topic")
+
+	cmd.AddCommand(NewLamyVersionCommand())
+
+	return cmd
+}
+
+var (
 	isList = false
 	isTech = false
 )
 
 // Execute executes the lamy command.
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+	cmd := NewLamyCommand()
+	if err := cmd.Execute(); err != nil {
+		cmd.PrintErr(err)
 		os.Exit(1)
 	}
-}
-
-func init() {
-	rootCmd.Flags().BoolVarP(&isList, "list", "l", false, "list questions")
-	rootCmd.Flags().BoolVarP(&isTech, "tech", "t", false, "use questions for technical topic")
 }
 
 func generateSurveyQuestions(qs []question.Question) []*survey.Question {
@@ -80,7 +86,7 @@ func (ti *TerminalInteraction) ask(qs []question.Question) (question.Answers, er
 	return ans, nil
 }
 
-func lamyRun(target string) error {
+func runLamy(cmd *cobra.Command, target string) error {
 	var qt []question.QuestionTemplate
 
 	if isTech {
@@ -93,7 +99,7 @@ func lamyRun(target string) error {
 
 	if isList {
 		for _, q := range qs {
-			fmt.Println(q.Content + "\n")
+			cmd.Println(q.Content + "\n")
 		}
 		return nil
 	}
