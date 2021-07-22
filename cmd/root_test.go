@@ -59,7 +59,7 @@ func TestRootCommand(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			buf := new(bytes.Buffer)
-			cmd := NewLamyCommand(buf, buf)
+			cmd := NewLamyCommand()
 			cmd.SetOut(buf)
 			cmdArgs := strings.Split(tt.command, " ")
 			fmt.Printf("cmdArgs %+v\n", cmdArgs)
