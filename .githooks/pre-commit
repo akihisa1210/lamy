@@ -1,0 +1,19 @@
+#/bin/sh
+
+# staticcheck
+staticcheck_result=0
+$(staticcheck) || staticcheck_result=$?
+if [ ! "$staticcheck_result" = "0" ]; then
+  echo "pre-commit: staticcheck failed!"
+  exit 1
+fi
+echo "pre-commit: staticcheck ok"
+
+# actionlint
+actionlint_result=0
+$(actionlint) || actionlint_result=$?
+if [ ! "$actionlint_result" = "0" ]; then
+  echo "pre-commit: actionlint failed!"
+  exit 1
+fi
+echo "pre-commit: actionlint ok"
