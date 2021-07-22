@@ -3,6 +3,7 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/AlecAivazis/survey/v2"
@@ -11,7 +12,7 @@ import (
 )
 
 // NewLamyCommand creates the lamy command.
-func NewLamyCommand() *cobra.Command {
+func NewLamyCommand(out, err io.Writer) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "lamy",
 		Short: "A CLI tool that asks a series of questions to clarify what you want to know.",
@@ -19,7 +20,7 @@ func NewLamyCommand() *cobra.Command {
 By default, the CLI asks you questions about genre, difference, part, definition, etymology, opposite, cause, and effect.`,
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			err := lamyRun(args[0])
+			err := lamyRun(args[0], out)
 			if err != nil {
 				return err
 			}
@@ -42,9 +43,9 @@ var (
 
 // Execute executes the lamy command.
 func Execute() {
-	cmd := NewLamyCommand()
+	cmd := NewLamyCommand(os.Stdout, os.Stderr)
 	if err := cmd.Execute(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		cmd.PrintErr(err)
 		os.Exit(1)
 	}
 }
@@ -87,7 +88,7 @@ func (ti *TerminalInteraction) ask(qs []question.Question) (question.Answers, er
 	return ans, nil
 }
 
-func lamyRun(target string) error {
+func lamyRun(target string, out io.Writer) error {
 	var qt []question.QuestionTemplate
 
 	if isTech {
@@ -100,7 +101,7 @@ func lamyRun(target string) error {
 
 	if isList {
 		for _, q := range qs {
-			fmt.Println(q.Content + "\n")
+			fmt.Fprintln(out, q.Content+"\n")
 		}
 		return nil
 	}
