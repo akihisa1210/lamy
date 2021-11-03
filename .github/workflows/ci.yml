@@ -4,63 +4,49 @@ on:
   push:
 
 jobs:
-  staticcheck:
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Set up Go
-        uses: actions/setup-go@v2
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
         with:
           go-version: 1.16
-      - name: Restore cache
-        uses: actions/cache@v2
+      - uses: actions/cache@v2
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
-      - name: Install Staticcheck
-        run: go get honnef.co/go/tools/cmd/staticcheck
-      - name: Run Staticcheck
-        run: staticcheck
-  golereaser-check:
+      - run: go install honnef.co/go/tools/cmd/staticcheck@df71e5d0e0ed317ebf43e6e59cf919430fa4b8f2 # v0.2.1
+      - run: staticcheck
+  check-goreleaser-config:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Set up Go
-        uses: actions/setup-go@v2
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
         with:
           go-version: 1.16
-      - name: Restore cache
-        uses: actions/cache@v2
+      - uses: actions/cache@v2
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
-      - name: Install GoReleaser
-        run: |
-          go get github.com/goreleaser/goreleaser
-          go install github.com/goreleaser/goreleaser
-      - name: Run goreleaser check
-        run: goreleaser check
+      - uses: goreleaser/goreleaser-action@5df302e5e9e4c66310a6b6493a8865b12c555af2 # v2.8.0
+        with:
+          version: v0.184.0
+          args: check
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Set up Go
-        uses: actions/setup-go@v2
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
         with:
           go-version: 1.16
-      - name: Restore cache
-        uses: actions/cache@v2
+      - uses: actions/cache@v2
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
-      - name: Test
-        run: go test -v ./...
+      - run: go test -v ./...
